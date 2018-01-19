@@ -96,7 +96,7 @@ func DecodeFile(path string) (*Data, error) {
 // Decode will accept a stream of bytes in the TNEF format and extract the
 // attachments and body into a Data object.
 func Decode(data []byte) (*Data, error) {
-	if byteToInt(data[0:4]) != tnefSignature {
+	if ByteToInt(data[0:4]) != tnefSignature {
 		return nil, errors.New("Signature didn't match valid TNEF file")
 	}
 
@@ -137,17 +137,17 @@ func Decode(data []byte) (*Data, error) {
 func decodeTNEFObject(data []byte) (object tnefObject) {
 	offset := 0
 
-	object.Level = byteToInt(data[offset : offset+1])
+	object.Level = ByteToInt(data[offset : offset+1])
 	offset++
-	object.Name = byteToInt(data[offset : offset+2])
+	object.Name = ByteToInt(data[offset : offset+2])
 	offset += 2
-	object.Type = byteToInt(data[offset : offset+2])
+	object.Type = ByteToInt(data[offset : offset+2])
 	offset += 2
-	attLength := byteToInt(data[offset : offset+4])
+	attLength := ByteToInt(data[offset : offset+4])
 	offset += 4
 	object.Data = data[offset : offset+attLength]
 	offset += attLength
-	//checksum := byteToInt(data[offset : offset+2])
+	//checksum := ByteToInt(data[offset : offset+2])
 	offset += 2
 
 	object.Length = offset

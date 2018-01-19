@@ -15,7 +15,7 @@ type MAPIAttribute struct {
 func decodeMapi(data []byte) (attrs []MAPIAttribute) {
 	dataLen := len(data)
 	offset := 0
-	numProperties := byteToInt(data[offset : offset+4])
+	numProperties := ByteToInt(data[offset : offset+4])
 	offset += 4
 
 	for i := 0; i < numProperties; i++ {
@@ -23,7 +23,7 @@ func decodeMapi(data []byte) (attrs []MAPIAttribute) {
 			continue
 		}
 
-		attrType := byteToInt(data[offset : offset+2])
+		attrType := ByteToInt(data[offset : offset+2])
 		offset += 2
 
 		isMultiValue := (attrType & mvFlag) != 0
@@ -34,21 +34,21 @@ func decodeMapi(data []byte) (attrs []MAPIAttribute) {
 			isMultiValue = true
 		}
 
-		attrName := byteToInt(data[offset : offset+2])
+		attrName := ByteToInt(data[offset : offset+2])
 		offset += 2
 
 		guid := 0
 		if attrName >= 0x8000 && attrName <= 0xFFFE {
-			guid = byteToInt(data[offset : offset+16])
+			guid = ByteToInt(data[offset : offset+16])
 			offset += 16
-			kind := byteToInt(data[offset : offset+4])
+			kind := ByteToInt(data[offset : offset+4])
 			offset += 4
 
 			if kind == 0 {
-				attrName = byteToInt(data[offset : offset+4])
+				attrName = ByteToInt(data[offset : offset+4])
 				offset += 4
 			} else if kind == 1 {
-				iidLen := byteToInt(data[offset : offset+4])
+				iidLen := ByteToInt(data[offset : offset+4])
 				offset += 4
 
 				offset += iidLen
@@ -60,7 +60,7 @@ func decodeMapi(data []byte) (attrs []MAPIAttribute) {
 		// Handle multi-value properties
 		valueCount := 1
 		if isMultiValue {
-			valueCount = byteToInt(data[offset : offset+4])
+			valueCount = ByteToInt(data[offset : offset+4])
 			offset += 4
 		}
 
@@ -73,7 +73,7 @@ func decodeMapi(data []byte) (attrs []MAPIAttribute) {
 		for i := 0; i < valueCount; i++ {
 			length := typeSize
 			if typeSize < 0 {
-				length = byteToInt(data[offset : offset+4])
+				length = ByteToInt(data[offset : offset+4])
 				offset += 4
 			}
 
